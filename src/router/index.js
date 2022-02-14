@@ -1,53 +1,46 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../pages/PageHome.vue'
-import Login from '../pages/PageLogin.vue'
-import Register from '../pages/PageRegister.vue'
-import Profile from '../pages/PageProfile.vue'
-import Settings from '../pages/PageSettings.vue'
-import ArticleCreate from '../pages/PageArticleCreate.vue'
-import Article from '../pages/PageArticle.vue'
+import { PageHome, PageLogin, PageRegister, PageProfile, PageSettings, PageArticleCreate, PageArticle } from '../pages'
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Home,
+        component: PageHome,
     },
     {
         path: '/login',
         name: 'Login',
-        component: Login,
+        component: PageLogin,
     },
     {
         path: '/register',
         name: 'Register',
-        component: Register,
+        component: PageRegister,
     },
     {
         path: '/profile',
         name: 'Profile',
-        component: Profile,
+        component: PageProfile,
     },
     {
         path: '/settings',
         name: 'Settings',
-        component: Settings,
+        component: PageSettings,
     },
     {
         path: '/article-create',
         name: 'ArticleCreate',
-        component: ArticleCreate,
+        component: PageArticleCreate,
     },
     {
         path: '/article',
         name: 'Article',
-        component: Article,
+        component: PageArticle,
     },
 ]
 
-const router = createRouter({
+export const router = createRouter({
     history: createWebHistory(),
     routes,
+    linkExactActiveClass: 'active',
 })
-
-export default router

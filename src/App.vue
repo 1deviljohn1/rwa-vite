@@ -1,10 +1,9 @@
 <script setup>
-import Header from './components/AppHeader.vue'
-import Footer from './components/AppFooter.vue'
+import { AppHeader, AppFooter } from './components'
 </script>
 
 <template>
-    <Header />
+    <AppHeader />
     <router-view />
-    <Footer />
+    <AppFooter />
 </template>

@@ -1,14 +1,14 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-const BASE_URL = 'https://api.realworld.io/api'
+const API_URL = import.meta.env.VITE_API_URL
 
-export default (url) => {
+export const useFetch = (url) => {
     const data = ref(null)
     const error = ref(null)
 
     axios
-        .get(BASE_URL + url)
+        .get(API_URL + url)
         .then((res) => {
             data.value = res.data
         })

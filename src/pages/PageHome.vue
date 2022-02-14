@@ -1,7 +1,11 @@
 <script setup>
-import useFetch from '../composable/fetch'
+import { AppFeed } from '../components'
+import { useFetch } from '../composable/fetch'
+import { useUserStore } from '../stores/user'
 
-const { data } = useFetch('/tags')
+const { data: tagsData } = useFetch('/tags')
+const { data: feedData } = useFetch('/articles')
+const { username } = useUserStore()
 </script>
 
 <template>
@@ -18,7 +22,7 @@ const { data } = useFetch('/tags')
                 <div class="col-md-9">
                     <div class="feed-toggle">
                         <ul class="nav nav-pills outline-active">
-                            <li class="nav-item">
+                            <li v-if="username" class="nav-item">
                                 <a class="nav-link disabled" href="">Your Feed</a>
                             </li>
                             <li class="nav-item">
@@ -27,50 +31,20 @@ const { data } = useFetch('/tags')
                         </ul>
                     </div>
 
-                    <div class="article-preview">
-                        <div class="article-meta">
-                            <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                            <div class="info">
-                                <a href="" class="author">Eric Simons</a>
-                                <span class="date">January 20th</span>
-                            </div>
-                            <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                                <i class="ion-heart"></i> 29
-                            </button>
-                        </div>
-                        <a href="" class="preview-link">
-                            <h1>How to build webapps that scale</h1>
-                            <p>This is the description for the post.</p>
-                            <span>Read more...</span>
-                        </a>
-                    </div>
-
-                    <div class="article-preview">
-                        <div class="article-meta">
-                            <a href="profile.html"><img src="http://i.imgur.com/N4VcUeJ.jpg" /></a>
-                            <div class="info">
-                                <a href="" class="author">Albert Pai</a>
-                                <span class="date">January 20th</span>
-                            </div>
-                            <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                                <i class="ion-heart"></i> 32
-                            </button>
-                        </div>
-                        <a href="" class="preview-link">
-                            <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                            <p>This is the description for the post.</p>
-                            <span>Read more...</span>
-                        </a>
-                    </div>
+                    <AppFeed v-if="feedData" :articles="feedData.articles" />
                 </div>
 
-                <div v-if="data" class="col-md-3">
+                <div v-if="tagsData" class="col-md-3">
                     <div class="sidebar">
                         <p>Popular Tags</p>
                         <div class="tag-list">
-                            <a v-for="(tag, index) in data.tags" :key="index" href="" class="tag-pill tag-default">{{
-                                tag
-                            }}</a>
+                            <a
+                                v-for="(tag, index) in tagsData.tags"
+                                :key="index"
+                                href=""
+                                class="tag-pill tag-default"
+                                >{{ tag }}</a
+                            >
                         </div>
                     </div>
                 </div>
