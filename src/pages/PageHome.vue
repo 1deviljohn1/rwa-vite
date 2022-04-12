@@ -1,7 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { AppFeed } from '../components'
 import { useFetch } from '../composable/fetch'
 import { useUserStore } from '../stores/user'
+import { Article, Tag } from '../types'
 
 const { data: tagsData } = useFetch('/tags')
 const { data: feedData } = useFetch('/articles')
@@ -38,13 +39,9 @@ const { username } = useUserStore()
                     <div class="sidebar">
                         <p>Popular Tags</p>
                         <div class="tag-list">
-                            <a
-                                v-for="(tag, index) in tagsData.tags"
-                                :key="index"
-                                href=""
-                                class="tag-pill tag-default"
-                                >{{ tag }}</a
-                            >
+                            <a v-for="(tag, index) in tagsData.tags" :key="index" class="tag-pill tag-default" href="">
+                                {{ tag }}
+                            </a>
                         </div>
                     </div>
                 </div>

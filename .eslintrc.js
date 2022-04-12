@@ -1,11 +1,13 @@
 module.exports = {
+    root: true,
     env: {
         node: true,
         'vue/setup-compiler-macros': true,
     },
-    extends: ['eslint:recommended', 'airbnb-base', 'plugin:vue/vue3-essential', 'prettier'],
-    rules: {
-        'import/prefer-default-export': 'off',
-        'import/no-default-export': 'error',
+    parser: 'vue-eslint-parser',
+    parserOptions: {
+        parser: '@typescript-eslint/parser',
     },
+    plugins: ['@typescript-eslint'],
+    extends: ['eslint:recommended', 'plugin:vue/vue3-recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
 }

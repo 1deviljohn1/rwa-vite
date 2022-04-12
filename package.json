@@ -1,12 +1,12 @@
 {
     "name": "rwa-vite",
+    "private": true,
     "version": "0.0.0",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
-        "format": "prettier .  --write"
+        "check": "vue-tsc --noEmit && eslint src --ext .js,.ts,.vue"
     },
     "dependencies": {
         "axios": "^0.25.0",
@@ -15,14 +15,15 @@
         "vue-router": "^4.0.12"
     },
     "devDependencies": {
-        "@vitejs/plugin-vue": "^2.0.0",
-        "eslint": "^8.2.0",
-        "eslint-config-airbnb-base": "^15.0.0",
-        "eslint-config-prettier": "^8.3.0",
-        "eslint-plugin-import": "^2.25.2",
-        "eslint-plugin-vue": "^8.4.1",
-        "prettier": "^2.5.1",
-        "vite": "^2.7.2",
-        "vite-plugin-eslint": "^1.3.0"
+        "@typescript-eslint/eslint-plugin": "^5.19.0",
+        "@typescript-eslint/parser": "^5.19.0",
+        "@vitejs/plugin-vue": "^2.3.0",
+        "eslint": "^8.13.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-vue": "^8.6.0",
+        "prettier": "2.6.2",
+        "typescript": "^4.6.3",
+        "vite": "^2.9.0",
+        "vue-tsc": "^0.29.8"
     }
 }
