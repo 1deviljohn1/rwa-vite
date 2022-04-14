@@ -19,3 +19,17 @@ export interface Author {
     image: string
     following: boolean
 }
+
+export interface ArticlesResponse {
+    articles: Article[]
+    articlesCount: number
+}
+
+export interface TagsResponse {
+    tags: Tag[]
+}
+
+export enum ApiEndpoints {
+    Articles = '/articles',
+    Tags = '/tags',
+}

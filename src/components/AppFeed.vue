@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { ISOtoDate } from '../utils/date'
+import { Article } from '../types'
 
-defineProps({
-    articles: {
-        type: Object,
-        default() {
-            return []
-        },
-    },
-})
+interface Props {
+    articles: Article[]
+}
+
+defineProps<Props>()
 </script>
 
 <template>

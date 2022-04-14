@@ -1,19 +1,18 @@
-import { ref } from 'vue'
 import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-export const useFetch = (url: string) => {
-    const data = ref(null)
-    const error = ref(null)
+export const useFetch = async (url: string) => {
+    let data!: null | object
+    let error!: null | string
 
-    axios
+    await axios
         .get(API_URL + url)
         .then((res) => {
-            data.value = res.data
+            data = res.data
         })
         .catch((err) => {
-            error.value = err
+            error = err
         })
 
     return { data, error }
