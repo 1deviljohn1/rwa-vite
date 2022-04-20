@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { ref, onBeforeMount, Ref } from 'vue'
 import { AppFeed } from '../components'
-import articles from '../composable/articles'
-import tags from '../composable/tags'
+import { useArticles } from '../composable/articles'
+import { useTags } from '../composable/tags'
 import { useUserStore } from '../stores/user'
+import { Article, Tag } from '../types'
 
-const { username } = useUserStore()
+const { user } = useUserStore()
+const articles: Ref<Array<Article>> = ref([])
+const tags: Ref<Array<Tag>> = ref([])
+
+onBeforeMount(async () => {
+    articles.value = await useArticles()
+    tags.value = await useTags()
+})
 </script>
 
 <template>
@@ -21,7 +30,7 @@ const { username } = useUserStore()
                 <div class="col-md-9">
                     <div class="feed-toggle">
                         <ul class="nav nav-pills outline-active">
-                            <li v-if="username" class="nav-item">
+                            <li v-if="user?.username" class="nav-item">
                                 <a class="nav-link disabled" href="">Your Feed</a>
                             </li>
                             <li class="nav-item">

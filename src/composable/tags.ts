@@ -1,8 +1,9 @@
 import { ref } from 'vue'
-import { useFetch } from '../services/fetch'
-import { TagsResponse, ApiEndpoints } from '../types'
+import { api } from '../services/api'
+import { TagsResponse, ApiEndpoints, ApiMethods } from '../types'
 
-const tagsData = ref(await useFetch(ApiEndpoints.Tags))
-const tags = tagsData.value.data as TagsResponse
-
-export default tags.tags
+export const useTags = async () => {
+    const tagsData = ref(await api(ApiMethods.Get, ApiEndpoints.Tags))
+    const tags = tagsData.value.responseData as TagsResponse
+    return tags.tags
+}

@@ -1,8 +1,10 @@
 import { ref } from 'vue'
-import { useFetch } from '../services/fetch'
-import { ArticlesResponse, ApiEndpoints } from '../types'
+import { api } from '../services/api'
+import { ArticlesResponse, ApiEndpoints, ApiMethods } from '../types'
 
-const articlesData = ref(await useFetch(ApiEndpoints.Articles))
-const articles = articlesData.value.data as ArticlesResponse
+export const useArticles = async () => {
+    const articlesData = ref(await api(ApiMethods.Get, ApiEndpoints.Articles))
+    const articles = articlesData.value.responseData as ArticlesResponse
 
-export default articles.articles
+    return articles.articles
+}

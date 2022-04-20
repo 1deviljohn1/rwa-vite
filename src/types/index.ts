@@ -11,7 +11,16 @@ export interface Article {
     author: Author
 }
 
+export interface ArticlesResponse {
+    articles: Article[]
+    articlesCount: number
+}
+
 export type Tag = string
+
+export interface TagsResponse {
+    tags: Tag[]
+}
 
 export interface Author {
     username: string
@@ -20,16 +29,26 @@ export interface Author {
     following: boolean
 }
 
-export interface ArticlesResponse {
-    articles: Article[]
-    articlesCount: number
+export interface User {
+    email: string
+    username: string
+    bio: string | null
+    image: string
+    token: string
 }
 
-export interface TagsResponse {
-    tags: Tag[]
+export interface UserResponse {
+    user: User
 }
 
 export enum ApiEndpoints {
     Articles = '/articles',
     Tags = '/tags',
+    Login = '/users/login',
+    Register = '/users',
+}
+
+export enum ApiMethods {
+    Get = 'GET',
+    Post = 'POST',
 }
