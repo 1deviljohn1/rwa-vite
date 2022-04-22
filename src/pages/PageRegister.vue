@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRegisterForm } from '../composable/register-form'
 
-const { username, email, password, errors, isLoading, isSubmitAllowed, onSubmitForm } = useRegisterForm()
+const { username, email, password, errors, isLoading, isSubmitAllowed, onSubmit } = useRegisterForm()
 </script>
 
 <template>
@@ -18,7 +18,7 @@ const { username, email, password, errors, isLoading, isSubmitAllowed, onSubmitF
                         <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
                     </ul>
 
-                    <form @submit.prevent="onSubmitForm">
+                    <form @submit.prevent="onSubmit">
                         <fieldset :disabled="isLoading" class="form-group">
                             <input
                                 v-model.trim="username"

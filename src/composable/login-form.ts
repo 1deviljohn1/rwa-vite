@@ -1,44 +1,32 @@
-import { ref, computed, Ref } from 'vue'
-import { router } from '../router'
-import { api } from '../services/api'
-import { useUserStore } from '../stores/user'
-import { ApiMethods, ApiEndpoints, UserResponse } from '../types'
+import { Form } from '../composable/form'
+import { computed } from 'vue'
+import { ApiEndpoints } from '../types'
 
-export const useLoginForm = () => {
-    const email = ref('')
-    const password = ref('')
-    const errors: Ref<Array<string>> = ref([])
-    const isLoading = ref(false)
+class LoginForm extends Form {
+    apiEndpoint = ApiEndpoints.Login
 
-    const isSubmitAllowed = computed((): boolean => {
-        return !!email.value.length && !!password.value.length
-    })
-
-    const onSubmitForm = async () => {
-        const loginData = {
+    protected formData = (): object => {
+        return {
             user: {
-                email: email.value,
-                password: password.value,
+                email: this.email.value,
+                password: this.password.value,
             },
-        }
-
-        isLoading.value = true
-        const user = await api(ApiMethods.Post, ApiEndpoints.Login, loginData)
-        const userData = user.responseData as UserResponse
-        isLoading.value = false
-
-        if (userData) {
-            errors.value = []
-            const { setUser } = useUserStore()
-            setUser(userData.user)
-            router.push('/')
-        } else {
-            const errorData = user.responseError?.response?.data.errors
-            errors.value = Object.entries(errorData).map((error) => {
-                return `${error[0]} ${error[1]}`
-            })
         }
     }
 
-    return { email, password, errors, isLoading, isSubmitAllowed, onSubmitForm }
+    isSubmitAllowed = computed((): boolean => {
+        return !!this.email.value.length && !!this.password.value.length
+    })
+}
+
+export const useLoginForm = () => {
+    const LoginFormObj = new LoginForm()
+    return {
+        email: LoginFormObj.email,
+        errors: LoginFormObj.errors,
+        isLoading: LoginFormObj.isLoading,
+        isSubmitAllowed: LoginFormObj.isSubmitAllowed,
+        onSubmit: LoginFormObj.onSubmit,
+        password: LoginFormObj.password,
+    }
 }

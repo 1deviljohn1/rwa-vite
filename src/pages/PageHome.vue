@@ -9,10 +9,16 @@ import { Article, Tag } from '../types'
 const { user } = useUserStore()
 const articles: Ref<Array<Article>> = ref([])
 const tags: Ref<Array<Tag>> = ref([])
+const error = ref('')
 
 onBeforeMount(async () => {
-    articles.value = await useArticles()
-    tags.value = await useTags()
+    try {
+        const [articlesFetch, tagsFetch] = await Promise.all([useArticles(), useTags()])
+        articles.value = articlesFetch
+        tags.value = tagsFetch
+    } catch (err) {
+        error.value = 'Service unavailable'
+    }
 })
 </script>
 
@@ -39,10 +45,14 @@ onBeforeMount(async () => {
                         </ul>
                     </div>
 
-                    <AppFeed v-if="articles" :articles="articles" />
+                    <div v-if="error" class="article-preview">{{ error }}</div>
+                    <template v-else>
+                        <AppFeed v-if="articles.length" :articles="articles" />
+                        <div v-else class="article-preview">Loading articles...</div>
+                    </template>
                 </div>
 
-                <div v-if="tags" class="col-md-3">
+                <div v-if="tags.length" class="col-md-3">
                     <div class="sidebar">
                         <p>Popular Tags</p>
                         <div class="tag-list">

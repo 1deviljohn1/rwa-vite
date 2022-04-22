@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useLoginForm } from '../composable/login-form'
 
-const { email, password, errors, isLoading, onSubmitForm, isSubmitAllowed } = useLoginForm()
+const { email, password, errors, isLoading, onSubmit, isSubmitAllowed } = useLoginForm()
 </script>
 
 <template>
@@ -18,7 +18,7 @@ const { email, password, errors, isLoading, onSubmitForm, isSubmitAllowed } = us
                         <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
                     </ul>
 
-                    <form @submit.prevent="onSubmitForm">
+                    <form @submit.prevent="onSubmit">
                         <fieldset :disabled="isLoading" class="form-group">
                             <input
                                 v-model.trim="email"

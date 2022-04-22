@@ -1,46 +1,35 @@
-import { ref, computed, Ref } from 'vue'
-import { router } from '../router'
-import { api } from '../services/api'
-import { useUserStore } from '../stores/user'
-import { ApiMethods, ApiEndpoints, UserResponse } from '../types'
+import { ref, computed } from 'vue'
+import { Form } from '../composable/form'
+import { ApiEndpoints } from '../types'
 
-export const useRegisterForm = () => {
-    const username = ref('')
-    const email = ref('')
-    const password = ref('')
-    const errors: Ref<Array<string>> = ref([])
-    const isLoading = ref(false)
+class RegisterForm extends Form {
+    username = ref('')
+    apiEndpoint = ApiEndpoints.Register
 
-    const isSubmitAllowed = computed((): boolean => {
-        return !!email.value.length && !!password.value.length
-    })
-
-    const onSubmitForm = async () => {
-        const registerData = {
+    protected formData = (): object => {
+        return {
             user: {
-                username: username.value,
-                email: email.value,
-                password: password.value,
+                username: this.username.value,
+                email: this.email.value,
+                password: this.password.value,
             },
-        }
-
-        isLoading.value = true
-        const user = await api(ApiMethods.Post, ApiEndpoints.Register, registerData)
-        const userData = user.responseData as UserResponse
-        isLoading.value = false
-
-        if (user.responseData) {
-            errors.value = []
-            const { setUser } = useUserStore()
-            setUser(userData.user)
-            router.push('/')
-        } else {
-            const errorData = user.responseError?.response?.data.errors
-            errors.value = Object.entries(errorData).map((error) => {
-                return `${error[0]} ${error[1]}`
-            })
         }
     }
 
-    return { email, password, errors, username, isLoading, isSubmitAllowed, onSubmitForm }
+    isSubmitAllowed = computed((): boolean => {
+        return !!this.username.value.length && !!this.email.value.length && !!this.password.value.length
+    })
+}
+
+export const useRegisterForm = () => {
+    const RegisterFormObj = new RegisterForm()
+    return {
+        username: RegisterFormObj.username,
+        email: RegisterFormObj.email,
+        errors: RegisterFormObj.errors,
+        isLoading: RegisterFormObj.isLoading,
+        isSubmitAllowed: RegisterFormObj.isSubmitAllowed,
+        onSubmit: RegisterFormObj.onSubmit,
+        password: RegisterFormObj.password,
+    }
 }
