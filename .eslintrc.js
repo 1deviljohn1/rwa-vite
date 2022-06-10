@@ -10,4 +10,8 @@ module.exports = {
     },
     plugins: ['@typescript-eslint'],
     extends: ['eslint:recommended', 'plugin:vue/vue3-recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+    rules: {
+        'no-console': 1,
+        'vue/require-v-for-key': 0,
+    },
 }

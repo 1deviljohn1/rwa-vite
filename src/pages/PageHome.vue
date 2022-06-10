@@ -4,27 +4,63 @@ import { AppFeed } from '../components'
 import { useArticles } from '../composable/articles'
 import { useTags } from '../composable/tags'
 import { useUserStore } from '../stores/user'
-import { Article, Tag } from '../types'
+import { Article, Tag, ArticlesTypes } from '../types'
 
-const { user } = useUserStore()
+const { isAuth } = useUserStore()
 const articles: Ref<Array<Article>> = ref([])
 const tags: Ref<Array<Tag>> = ref([])
 const error = ref('')
+const loading = ref(false)
+const type = isAuth ? ArticlesTypes.Feed : ArticlesTypes.Articles
+let activeTab = ref(type)
+const tabs = [{ title: 'Global Feed', name: ArticlesTypes.Articles }]
+const errorMessage = 'Oops! Something went wrong!'
+
+if (isAuth) {
+    tabs.unshift({ title: 'Your Feed', name: ArticlesTypes.Feed })
+}
 
 onBeforeMount(async () => {
     try {
-        const [articlesFetch, tagsFetch] = await Promise.all([useArticles(), useTags()])
+        const [articlesFetch, tagsFetch] = await Promise.all([useArticles(type), useTags()])
         articles.value = articlesFetch
         tags.value = tagsFetch
     } catch (err) {
-        error.value = 'Service unavailable'
+        error.value = errorMessage
     }
 })
+
+const loadArticles = async (type: ArticlesTypes) => {
+    if (activeTab.value === type) {
+        return
+    }
+
+    loading.value = true
+
+    error.value = ''
+    activeTab.value = type
+
+    try {
+        const articlesData = await useArticles(type)
+        articles.value = articlesData
+    } catch (err) {
+        error.value = errorMessage
+    }
+
+    loading.value = false
+}
+
+const getTabClasses = (name: string) => {
+    return {
+        active: name === activeTab.value,
+        disabled: loading,
+    }
+}
 </script>
 
 <template>
     <div class="home-page">
-        <div class="banner">
+        <div v-if="!isAuth" class="banner">
             <div class="container">
                 <h1 class="logo-font">conduit</h1>
                 <p>A place to share your knowledge.</p>
@@ -36,18 +72,17 @@ onBeforeMount(async () => {
                 <div class="col-md-9">
                     <div class="feed-toggle">
                         <ul class="nav nav-pills outline-active">
-                            <li v-if="user?.username" class="nav-item">
-                                <a class="nav-link disabled" href="">Your Feed</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="">Global Feed</a>
+                            <li v-for="tab in tabs" class="nav-item" @click="loadArticles(tab.name)">
+                                <button class="nav-link clear" :class="getTabClasses(tab.name)">
+                                    {{ tab.title }}
+                                </button>
                             </li>
                         </ul>
                     </div>
 
                     <div v-if="error" class="article-preview">{{ error }}</div>
                     <template v-else>
-                        <AppFeed v-if="articles.length" :articles="articles" />
+                        <AppFeed v-if="articles.length && !loading" :articles="articles" />
                         <div v-else class="article-preview">Loading articles...</div>
                     </template>
                 </div>
@@ -56,9 +91,9 @@ onBeforeMount(async () => {
                     <div class="sidebar">
                         <p>Popular Tags</p>
                         <div class="tag-list">
-                            <a v-for="(tag, index) in tags" :key="index" class="tag-pill tag-default" href="">
+                            <button v-for="(tag, index) in tags" :key="index" class="tag-pill tag-default clear">
                                 {{ tag }}
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>

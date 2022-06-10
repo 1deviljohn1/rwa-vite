@@ -11,6 +11,11 @@ export interface Article {
     author: Author
 }
 
+export enum ArticlesTypes {
+    Articles = 'articles',
+    Feed = 'feed',
+}
+
 export interface ArticlesResponse {
     articles: Article[]
     articlesCount: number
@@ -43,9 +48,11 @@ export interface UserResponse {
 
 export enum ApiEndpoints {
     Articles = '/articles',
+    Feed = '/articles/feed',
     Tags = '/tags',
     Login = '/users/login',
     Register = '/users',
+    User = '/user',
 }
 
 export enum ApiMethods {
