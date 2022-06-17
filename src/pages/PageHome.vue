@@ -4,15 +4,16 @@ import { AppFeed } from '../components'
 import { useArticles } from '../composable/articles'
 import { useTags } from '../composable/tags'
 import { useUserStore } from '../stores/user'
-import { Article, Tag, ArticlesTypes } from '../types'
+import { Article, ArticlesTypes } from '../types'
 
 const { isAuth } = useUserStore()
 const articles: Ref<Array<Article>> = ref([])
-const tags: Ref<Array<Tag>> = ref([])
+const tags: Ref<Array<string>> = ref([])
 const error = ref('')
 const loading = ref(false)
 const type = isAuth ? ArticlesTypes.Feed : ArticlesTypes.Articles
-let activeTab = ref(type)
+let activeFeed = ref(type)
+let activeTag = ref('')
 const tabs = [{ title: 'Global Feed', name: ArticlesTypes.Articles }]
 const errorMessage = 'Oops! Something went wrong!'
 
@@ -31,29 +32,38 @@ onBeforeMount(async () => {
 })
 
 const loadArticles = async (type: ArticlesTypes) => {
-    if (activeTab.value === type) {
-        return
-    }
-
     loading.value = true
-
     error.value = ''
-    activeTab.value = type
-
     try {
         const articlesData = await useArticles(type)
         articles.value = articlesData
     } catch (err) {
         error.value = errorMessage
     }
-
     loading.value = false
+}
+
+const loadArticlesByType = async (type: ArticlesTypes) => {
+    if (activeFeed.value === type) {
+        return
+    }
+    activeFeed.value = type
+    activeTag.value = ''
+    loadArticles(type)
+}
+
+const loadArticlesByTag = async (tag: string) => {
+    if (activeTag.value === tag) {
+        return
+    }
+    activeTag.value = tag
+    loadArticles(type)
 }
 
 const getTabClasses = (name: string) => {
     return {
-        active: name === activeTab.value,
-        disabled: loading,
+        active: name === activeFeed.value && !activeTag.value,
+        disabled: loading.value,
     }
 }
 </script>
@@ -72,9 +82,14 @@ const getTabClasses = (name: string) => {
                 <div class="col-md-9">
                     <div class="feed-toggle">
                         <ul class="nav nav-pills outline-active">
-                            <li v-for="tab in tabs" class="nav-item" @click="loadArticles(tab.name)">
-                                <button class="nav-link clear" :class="getTabClasses(tab.name)">
+                            <li v-for="tab in tabs" class="nav-item" @click="loadArticlesByType(tab.name)">
+                                <button class="nav-link clear" :class="getTabClasses(tab.name)" :disabled="loading">
                                     {{ tab.title }}
+                                </button>
+                            </li>
+                            <li v-if="activeTag" class="nav-item">
+                                <button class="nav-link clear active">
+                                    #{{ activeTag }}
                                 </button>
                             </li>
                         </ul>
@@ -91,7 +106,14 @@ const getTabClasses = (name: string) => {
                     <div class="sidebar">
                         <p>Popular Tags</p>
                         <div class="tag-list">
-                            <button v-for="(tag, index) in tags" :key="index" class="tag-pill tag-default clear">
+                            <button
+                                v-for="(tag, index) in tags"
+                                :key="index"
+                                class="tag-pill tag-default clear"
+                                :class="{'tag-primary': tag === activeTag}"
+                                :disabled="loading"
+                                @click="loadArticlesByTag(tag)"
+                            >
                                 {{ tag }}
                             </button>
                         </div>

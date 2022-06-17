@@ -3,7 +3,7 @@ export interface Article {
     title: string
     description: string
     body: string
-    tagList: Tag[]
+    tagList: string[]
     createdAt: string
     updatedAt: string
     favorited: boolean
@@ -21,10 +21,8 @@ export interface ArticlesResponse {
     articlesCount: number
 }
 
-export type Tag = string
-
 export interface TagsResponse {
-    tags: Tag[]
+    tags: string[]
 }
 
 export interface Author {
