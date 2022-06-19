@@ -7,6 +7,7 @@ import { useUserStore } from '../stores/user'
 import { Article, ArticlesTypes } from '../types'
 
 const { isAuth } = useUserStore()
+const { get: getArticles, favorite: favoriteArticle } = useArticles()
 const articles: Ref<Array<Article>> = ref([])
 const tags: Ref<Array<string>> = ref([])
 const error = ref('')
@@ -23,7 +24,7 @@ if (isAuth) {
 
 onBeforeMount(async () => {
     try {
-        const [articlesFetch, tagsFetch] = await Promise.all([useArticles(type), useTags()])
+        const [articlesFetch, tagsFetch] = await Promise.all([getArticles(type), useTags()])
         articles.value = articlesFetch
         tags.value = tagsFetch
     } catch (err) {
@@ -31,11 +32,11 @@ onBeforeMount(async () => {
     }
 })
 
-const loadArticles = async (type: ArticlesTypes) => {
+const loadArticles = async (type: ArticlesTypes, payload?: Record<string, unknown>) => {
     loading.value = true
     error.value = ''
     try {
-        const articlesData = await useArticles(type)
+        const articlesData = await getArticles(type, payload)
         articles.value = articlesData
     } catch (err) {
         error.value = errorMessage
@@ -57,13 +58,23 @@ const loadArticlesByTag = async (tag: string) => {
         return
     }
     activeTag.value = tag
-    loadArticles(type)
+    loadArticles(ArticlesTypes.Articles, { tag: activeTag.value })
 }
 
 const getTabClasses = (name: string) => {
     return {
         active: name === activeFeed.value && !activeTag.value,
         disabled: loading.value,
+    }
+}
+
+const favorite = async (article: Article) => {
+    try {
+        const articlesData = await favoriteArticle(article.slug, article.favorited)
+        const updatedIndex = articles.value.findIndex((article) => article.slug === article.slug)
+        articles.value[updatedIndex] = articlesData
+    } catch (err) {
+        error.value = errorMessage
     }
 }
 </script>
@@ -88,16 +99,14 @@ const getTabClasses = (name: string) => {
                                 </button>
                             </li>
                             <li v-if="activeTag" class="nav-item">
-                                <button class="nav-link clear active">
-                                    #{{ activeTag }}
-                                </button>
+                                <button class="nav-link clear active">#{{ activeTag }}</button>
                             </li>
                         </ul>
                     </div>
 
                     <div v-if="error" class="article-preview">{{ error }}</div>
                     <template v-else>
-                        <AppFeed v-if="articles.length && !loading" :articles="articles" />
+                        <AppFeed v-if="articles.length && !loading" :articles="articles" @favorite="favorite" />
                         <div v-else class="article-preview">Loading articles...</div>
                     </template>
                 </div>
@@ -110,7 +119,7 @@ const getTabClasses = (name: string) => {
                                 v-for="(tag, index) in tags"
                                 :key="index"
                                 class="tag-pill tag-default clear"
-                                :class="{'tag-primary': tag === activeTag}"
+                                :class="{ 'tag-primary': tag === activeTag }"
                                 :disabled="loading"
                                 @click="loadArticlesByTag(tag)"
                             >

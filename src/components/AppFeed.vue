@@ -1,12 +1,32 @@
 <script setup lang="ts">
 import { ISOtoDate } from '../utils/date'
 import { Article } from '../types'
+import { useUserStore } from '../stores/user'
+import { useRouter } from 'vue-router'
+
+const { isAuth } = useUserStore()
+const router = useRouter()
+
+const emit = defineEmits(['favorite'])
 
 interface Props {
     articles: Article[]
 }
 
 defineProps<Props>()
+
+const favourite = (article: Article) => {
+    if (!isAuth) {
+        router.push({ name: 'Login' })
+        return
+    }
+
+    emit('favorite', article)
+}
+
+const favoriteClass = (favorited: boolean) => {
+    return favorited ? 'btn-primary' : 'btn-outline-primary'
+}
 </script>
 
 <template>
@@ -17,7 +37,11 @@ defineProps<Props>()
                 <a href="" class="author">{{ article.author.username }}</a>
                 <span class="date">{{ ISOtoDate(article.updatedAt) }}</span>
             </div>
-            <button class="btn btn-outline-primary btn-sm pull-xs-right">
+            <button
+                :class="favoriteClass(article.favorited)"
+                class="btn btn-sm pull-xs-right"
+                @click="favourite(article)"
+            >
                 <i class="ion-heart"></i> {{ article.favoritesCount }}
             </button>
         </div>

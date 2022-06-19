@@ -13,7 +13,8 @@ export const api = async (method: ApiMethods, url: string, data: object | null =
     }
 
     if (data !== null) {
-        params.data = data
+        const payload = method === ApiMethods.Get ? 'params' : 'data'
+        params[payload] = data
     }
 
     if (token !== null) {
@@ -28,7 +29,6 @@ export const api = async (method: ApiMethods, url: string, data: object | null =
         })
         .catch((err: AxiosError) => {
             responseError = err
-            
         })
 
     return { responseData, responseError }

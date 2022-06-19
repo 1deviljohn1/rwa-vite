@@ -21,6 +21,10 @@ export interface ArticlesResponse {
     articlesCount: number
 }
 
+export interface SingleArticleResponse {
+    article: Article
+}
+
 export interface TagsResponse {
     tags: string[]
 }
@@ -51,9 +55,11 @@ export enum ApiEndpoints {
     Login = '/users/login',
     Register = '/users',
     User = '/user',
+    FavoriteArticle = '/articles/:slug/favorite',
 }
 
 export enum ApiMethods {
     Get = 'GET',
     Post = 'POST',
+    Delete = 'DELETE',
 }
