@@ -1,5 +1,5 @@
-import AppFeed from './AppFeed.vue'
+import AppArticle from './AppArticle.vue'
 import AppFooter from './AppFooter.vue'
 import AppHeader from './AppHeader.vue'
 
-export { AppFeed, AppFooter, AppHeader }
+export { AppArticle, AppFooter, AppHeader }

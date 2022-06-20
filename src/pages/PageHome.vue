@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onBeforeMount, Ref } from 'vue'
-import { AppFeed } from '../components'
+import { AppArticle } from '../components'
 import { useArticles } from '../composable/articles'
 import { useTags } from '../composable/tags'
 import { useUserStore } from '../stores/user'
@@ -12,8 +12,9 @@ const articles: Ref<Array<Article>> = ref([])
 const tags: Ref<Array<string>> = ref([])
 const error = ref('')
 const loading = ref(false)
+const favoriteProcessing = ref(false)
 const type = isAuth ? ArticlesTypes.Feed : ArticlesTypes.Articles
-let activeFeed = ref(type)
+let activeFeed: Ref<typeof type | null> = ref(type)
 let activeTag = ref('')
 const tabs = [{ title: 'Global Feed', name: ArticlesTypes.Articles }]
 const errorMessage = 'Oops! Something went wrong!'
@@ -40,8 +41,9 @@ const loadArticles = async (type: ArticlesTypes, payload?: Record<string, unknow
         articles.value = articlesData
     } catch (err) {
         error.value = errorMessage
+    } finally {
+        loading.value = false
     }
-    loading.value = false
 }
 
 const loadArticlesByType = async (type: ArticlesTypes) => {
@@ -57,6 +59,7 @@ const loadArticlesByTag = async (tag: string) => {
     if (activeTag.value === tag) {
         return
     }
+    activeFeed.value = null
     activeTag.value = tag
     loadArticles(ArticlesTypes.Articles, { tag: activeTag.value })
 }
@@ -69,12 +72,15 @@ const getTabClasses = (name: string) => {
 }
 
 const favorite = async (article: Article) => {
+    favoriteProcessing.value = true
     try {
         const articlesData = await favoriteArticle(article.slug, article.favorited)
-        const updatedIndex = articles.value.findIndex((article) => article.slug === article.slug)
+        const updatedIndex = articles.value.findIndex((item) => item.slug === article.slug)
         articles.value[updatedIndex] = articlesData
     } catch (err) {
         error.value = errorMessage
+    } finally {
+        favoriteProcessing.value = false
     }
 }
 </script>
@@ -106,7 +112,15 @@ const favorite = async (article: Article) => {
 
                     <div v-if="error" class="article-preview">{{ error }}</div>
                     <template v-else>
-                        <AppFeed v-if="articles.length && !loading" :articles="articles" @favorite="favorite" />
+                        <template v-if="articles.length && !loading">
+                            <div v-for="article in articles" :key="article.slug" class="article-preview">
+                                <AppArticle
+                                    :article="article"
+                                    :favorite-processing="favoriteProcessing"
+                                    @favorite="favorite"
+                                />
+                            </div>
+                        </template>
                         <div v-else class="article-preview">Loading articles...</div>
                     </template>
                 </div>

@@ -5,13 +5,24 @@ button {
     }
 
     &.btn-outline-primary {
+        &:active,
         &:focus,
+        &:focus-visible,
         &.focus {
             color: #5cb85c;
             background-image: none;
             background-color: transparent;
             border-color: #5cb85c;
-            outline: none;
+            outline: none !important;
+        }
+    }
+
+    &.btn-primary {
+        &:active,
+        &:focus,
+        &:focus-visible,
+        &.focus {
+            outline: none !important;
         }
     }
 }
