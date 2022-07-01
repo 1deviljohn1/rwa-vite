@@ -1,13 +1,14 @@
-import { ref, Ref } from 'vue'
+import { ref } from 'vue'
 import { router } from '../router'
 import { api } from '../services/api'
 import { useUserStore } from '../stores/user'
 import { ApiMethods, ApiEndpoints, UserResponse } from '../types'
+import { normalizeErrors } from '../utils/errors'
 
 export class Form {
     email = ref('')
     password = ref('')
-    errors: Ref<Array<string>> = ref([])
+    errors = ref<string[]>([])
     isLoading = ref(false)
     requiredFields: Array<string> = []
     apiEndpoint!: ApiEndpoints
@@ -30,10 +31,8 @@ export class Form {
             setUser(userData.user)
             router.push('/')
         } else {
-            const errorData = user.responseError?.response?.data.errors
-            this.errors.value = Object.entries(errorData).map((error) => {
-                return `${error[0]} ${error[1]}`
-            })
+            const errorData = user.responseError.response?.data.errors
+            this.errors.value = normalizeErrors(errorData)
         }
     }
 }

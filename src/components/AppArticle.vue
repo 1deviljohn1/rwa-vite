@@ -2,11 +2,10 @@
 import { ISOtoDate } from '../utils/date'
 import { Article } from '../types'
 import { useUserStore } from '../stores/user'
-import { useRouter } from 'vue-router'
 import { ref, watch } from 'vue'
+import { router } from '../router';
 
 const { isAuth } = useUserStore()
-const router = useRouter()
 const emit = defineEmits(['favorite'])
 const disabled = ref(false)
 interface Props {
