@@ -17,6 +17,11 @@ export const useUserStore = defineStore('user', {
             this.user = user
             this.setToken(user.token)
         },
+        clearUser() {
+            localStorage.removeItem('u_t')
+            this.user = null
+            this.token = ''
+        },
         setToken(token: string) {
             this.token = token
         },

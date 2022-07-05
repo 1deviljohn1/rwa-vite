@@ -11,8 +11,12 @@ const pinia = createPinia()
 app.use(pinia)
 
 if (localStorage.getItem('u_t')) {
-    const { getUserByToken } = useUserStore()
-    await getUserByToken(localStorage.getItem('u_t') || '')
+    try {
+        const { getUserByToken } = useUserStore()
+        await getUserByToken(localStorage.getItem('u_t') || '')
+    } catch (error) {
+        error
+    }
 }
 
 app.use(router)

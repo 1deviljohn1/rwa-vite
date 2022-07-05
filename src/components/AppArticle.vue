@@ -3,7 +3,7 @@ import { ISOtoDate } from '../utils/date'
 import { Article } from '../types'
 import { useUserStore } from '../stores/user'
 import { ref, watch } from 'vue'
-import { router } from '../router';
+import { router } from '../router'
 
 const { isAuth } = useUserStore()
 const emit = defineEmits(['favorite'])
@@ -16,7 +16,7 @@ const props = defineProps<Props>()
 
 watch(
     () => props.favoriteProcessing,
-    async (value) => {
+    (value) => {
         if (!value) {
             disabled.value = false
         }

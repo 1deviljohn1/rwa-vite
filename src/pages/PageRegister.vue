@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRegisterForm } from '../composable/register-form'
-
 const { username, email, password, errors, isLoading, isSubmitAllowed, onSubmit } = useRegisterForm()
 </script>
 

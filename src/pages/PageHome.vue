@@ -1,37 +1,44 @@
 <script setup lang="ts">
-import { ref, onBeforeMount, Ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ref, onBeforeMount, watch, computed } from 'vue'
 import { AppArticle } from '../components'
 import { useArticles } from '../composable/articles'
 import { useTags } from '../composable/tags'
 import { useUserStore } from '../stores/user'
-import { Article, ArticlesTypes } from '../types'
+import { Article, ArticlesTypes, Tab } from '../types'
 
-const { isAuth } = useUserStore()
+const { token, isAuth } = storeToRefs(useUserStore())
 const { get: getArticles, favorite: favoriteArticle } = useArticles()
-const articles: Ref<Array<Article>> = ref([])
-const tags: Ref<Array<string>> = ref([])
+const articles = ref<Array<Article>>([])
+const tags = ref<Array<string>>([])
 const error = ref('')
 const loading = ref(false)
 const favoriteProcessing = ref(false)
-const type = isAuth ? ArticlesTypes.Feed : ArticlesTypes.Articles
-let activeFeed: Ref<typeof type | null> = ref(type)
+const type = computed<ArticlesTypes>(() => {
+    return isAuth.value ? ArticlesTypes.Feed : ArticlesTypes.Articles
+})
+let activeFeed = ref<ArticlesTypes | null>(type.value)
 let activeTag = ref('')
-const tabs = [{ title: 'Global Feed', name: ArticlesTypes.Articles }]
+const tabs = ref<Array<Tab>>([{ title: 'Global Feed', name: ArticlesTypes.Articles }])
 const errorMessage = 'Oops! Something went wrong!'
 
-if (isAuth) {
-    tabs.unshift({ title: 'Your Feed', name: ArticlesTypes.Feed })
+if (isAuth.value) {
+    tabs.value.unshift({ title: 'Your Feed', name: ArticlesTypes.Feed })
 }
 
 onBeforeMount(async () => {
+    loadPageData()
+})
+
+const loadPageData = async () => {
     try {
-        const [articlesFetch, tagsFetch] = await Promise.all([getArticles(type), useTags()])
+        const [articlesFetch, tagsFetch] = await Promise.all([getArticles(type.value), useTags()])
         articles.value = articlesFetch
         tags.value = tagsFetch
     } catch (err) {
         error.value = errorMessage
     }
-})
+}
 
 const loadArticles = async (type: ArticlesTypes, payload?: Record<string, unknown>) => {
     loading.value = true
@@ -83,6 +90,16 @@ const favorite = async (article: Article) => {
         favoriteProcessing.value = false
     }
 }
+
+watch(token, async (value) => {
+    if (!value) {
+        tabs.value.shift()
+        activeFeed.value = ArticlesTypes.Articles
+        activeTag.value = ''
+    }
+
+    loadPageData()
+})
 </script>
 
 <template>

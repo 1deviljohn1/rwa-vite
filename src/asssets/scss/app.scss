@@ -25,4 +25,13 @@ button {
             outline: none !important;
         }
     }
+
+    &.btn-logout {
+        background: #fff;
+    }
+}
+
+.nav {
+    display: flex;
+    align-items: center;
 }

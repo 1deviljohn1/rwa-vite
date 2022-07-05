@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useCreateArticle } from '../composable/create-article'
-
 const { errors, isLoading, title, description, body, tagList, isSubmitAllowed, onSubmit } = useCreateArticle()
 </script>
 

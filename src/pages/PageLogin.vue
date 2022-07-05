@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useLoginForm } from '../composable/login-form'
-
 const { email, password, errors, isLoading, onSubmit, isSubmitAllowed } = useLoginForm()
 </script>
 

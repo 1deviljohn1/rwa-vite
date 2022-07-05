@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+import { router } from '../router'
 import { useUserStore } from '../stores/user'
+import { isImage } from '../utils/string'
 
 const { isAuth, user } = storeToRefs(useUserStore())
+const { clearUser } = useUserStore()
+const hasAvatar = computed(() => {
+    return user.value?.image && isImage(user.value?.image)
+})
+
+const logout = () => {
+    clearUser()
+    router.push({ name: 'Home' })
+}
 </script>
 
 <template>
@@ -22,7 +34,15 @@ const { isAuth, user } = storeToRefs(useUserStore())
                     <router-link to="/settings" class="nav-link"><i class="ion-gear-a"></i>&nbsp;Settings</router-link>
                 </li>
                 <li v-if="isAuth" class="nav-item">
-                    <router-link to="/profile" class="nav-link">{{ user?.username }}</router-link>
+                    <router-link to="/profile" class="nav-link">
+                        <img v-if="hasAvatar" class="user-pic" :src="(user?.image as string)" :alt="user?.username" />
+                        {{ user?.username }}
+                    </router-link>
+                </li>
+                <li v-if="isAuth" class="nav-item">
+                    <button class="clear btn-logout" @click="logout">
+                        <i class="ion-log-out"></i>
+                    </button>
                 </li>
                 <li v-if="!isAuth" class="nav-item">
                     <router-link to="/login" class="nav-link">Sign in</router-link>

@@ -29,6 +29,11 @@ export interface TagsResponse {
     tags: string[]
 }
 
+export interface Tab {
+    title: string,
+    name: ArticlesTypes
+}
+
 export interface Author {
     username: string
     bio: string | null
@@ -40,7 +45,7 @@ export interface User {
     email: string
     username: string
     bio: string | null
-    image: string
+    image: string | null
     token: string
 }
 
@@ -56,10 +61,12 @@ export enum ApiEndpoints {
     Register = '/users',
     User = '/user',
     FavoriteArticle = '/articles/:slug/favorite',
+    Profile = '/api/profiles/:username'
 }
 
 export enum ApiMethods {
     Get = 'GET',
     Post = 'POST',
     Delete = 'DELETE',
+    Put = 'PUT',
 }
