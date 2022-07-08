@@ -21,6 +21,8 @@ let activeFeed = ref<ArticlesTypes | null>(type.value)
 let activeTag = ref('')
 const tabs = ref<Array<Tab>>([{ title: 'Global Feed', name: ArticlesTypes.Articles }])
 const errorMessage = 'Oops! Something went wrong!'
+const noArticlesText = 'No articles are here... yet.'
+const loadingArticlesText = 'Loading articles...'
 
 if (isAuth.value) {
     tabs.value.unshift({ title: 'Your Feed', name: ArticlesTypes.Feed })
@@ -138,7 +140,8 @@ watch(token, async (value) => {
                                 />
                             </div>
                         </template>
-                        <div v-else class="article-preview">Loading articles...</div>
+                        <div v-if="loading" class="article-preview">{{ loadingArticlesText }}</div>
+                        <div v-if="!loading && !articles.length" class="article-preview">{{ noArticlesText }}</div>
                     </template>
                 </div>
 

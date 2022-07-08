@@ -13,5 +13,6 @@ module.exports = {
     rules: {
         'no-console': 1,
         'vue/require-v-for-key': 0,
+        'vue/no-v-html': 0,
     },
 }

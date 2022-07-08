@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from '../services/api'
-import { User, UserResponse } from '../types'
+import { User } from '../types'
 import { ApiEndpoints, ApiMethods } from '../types'
 
 export const useUserStore = defineStore('user', {
@@ -27,8 +27,8 @@ export const useUserStore = defineStore('user', {
         },
         async getUserByToken(token: string) {
             const userData = await api(ApiMethods.Get, ApiEndpoints.User, null, token)
-            const user = userData.responseData as UserResponse
-            this.setUser(user.user)
+            const user = userData.responseData.user as User
+            this.setUser(user)
             this.setToken(token)
         },
     },

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { router } from '../router'
 import { api } from '../services/api'
 import { useUserStore } from '../stores/user'
-import { ApiMethods, ApiEndpoints, UserResponse } from '../types'
+import { ApiMethods, ApiEndpoints, User } from '../types'
 import { normalizeErrors } from '../utils/errors'
 
 export class Form {
@@ -22,13 +22,13 @@ export class Form {
 
         this.isLoading.value = true
         const user = await api(ApiMethods.Post, this.apiEndpoint, formData)
-        const userData = user.responseData as UserResponse
+        const userData = user.responseData.user as User
         this.isLoading.value = false
 
         if (user.responseData) {
             this.errors.value = []
             const { setUser } = useUserStore()
-            setUser(userData.user)
+            setUser(userData)
             router.push('/')
         } else {
             const errorData = user.responseError.response?.data.errors

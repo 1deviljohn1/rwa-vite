@@ -4,7 +4,7 @@ import { ApiMethods } from '../types'
 const API_URL = import.meta.env.VITE_API_URL
 
 export const api = async (method: ApiMethods, url: string, data: object | null = null, token: string | null = null) => {
-    let responseData!: object
+    let responseData!: { [key: string]: object }
     let responseError!: AxiosError
 
     const params: AxiosRequestConfig = {

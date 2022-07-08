@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { router } from '../router'
 import { api } from '../services/api'
 import { useUserStore } from '../stores/user'
-import { ApiMethods, ApiEndpoints, UserResponse } from '../types'
+import { ApiMethods, ApiEndpoints, User } from '../types'
 
 const { user, token, setUser } = useUserStore()
 const image = ref(user?.image || '')
@@ -34,8 +34,8 @@ const submit = async () => {
 
     const userData = await api(ApiMethods.Put, ApiEndpoints.User, formData, token)
     if (userData.responseData) {
-        const user = userData.responseData as UserResponse
-        setUser(user.user)
+        const user = userData.responseData.user as User
+        setUser(user)
         router.push({ name: 'Profile' })
     } else {
         error.value = userData.responseError.response?.data

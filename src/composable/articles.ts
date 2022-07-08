@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { api } from '../services/api'
 import { useUserStore } from '../stores/user'
-import { ArticlesResponse, SingleArticleResponse, ApiEndpoints, ApiMethods, ArticlesTypes } from '../types'
+import { Article, ApiEndpoints, ApiMethods, ArticlesTypes } from '../types'
 
 const favorite = async (slug: string, favorited: boolean) => {
     const { token } = useUserStore()
@@ -9,8 +9,8 @@ const favorite = async (slug: string, favorited: boolean) => {
     const method = favorited ? ApiMethods.Delete : ApiMethods.Post
 
     const articlesData = ref(await api(method, endpoint, null, token))
-    const article = articlesData.value.responseData as SingleArticleResponse
-    return article.article
+    const article = articlesData.value.responseData.article as Article
+    return article
 }
 
 const get = async (type: ArticlesTypes, payload?: Record<string, unknown>) => {
@@ -18,9 +18,9 @@ const get = async (type: ArticlesTypes, payload?: Record<string, unknown>) => {
     const endpoint = type === ArticlesTypes.Articles ? ApiEndpoints.Articles : ApiEndpoints.Feed
 
     const articlesData = ref(await api(ApiMethods.Get, endpoint, payload, token))
-    const articles = articlesData.value.responseData as ArticlesResponse
+    const articles = articlesData.value.responseData.articles as Article[]
 
-    return articles.articles
+    return articles
 }
 
 export const useArticles = () => {

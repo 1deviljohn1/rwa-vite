@@ -34,7 +34,7 @@ const logout = () => {
                     <router-link to="/settings" class="nav-link"><i class="ion-gear-a"></i>&nbsp;Settings</router-link>
                 </li>
                 <li v-if="isAuth" class="nav-item">
-                    <router-link to="/profile" class="nav-link">
+                    <router-link :to="`/profile/${user?.username}`" class="nav-link">
                         <img v-if="hasAvatar" class="user-pic" :src="(user?.image as string)" :alt="user?.username" />
                         {{ user?.username }}
                     </router-link>

@@ -16,19 +16,6 @@ export enum ArticlesTypes {
     Feed = 'feed',
 }
 
-export interface ArticlesResponse {
-    articles: Article[]
-    articlesCount: number
-}
-
-export interface SingleArticleResponse {
-    article: Article
-}
-
-export interface TagsResponse {
-    tags: string[]
-}
-
 export interface Tab {
     title: string,
     name: ArticlesTypes
@@ -49,10 +36,6 @@ export interface User {
     token: string
 }
 
-export interface UserResponse {
-    user: User
-}
-
 export enum ApiEndpoints {
     Articles = '/articles',
     Feed = '/articles/feed',
@@ -61,7 +44,7 @@ export enum ApiEndpoints {
     Register = '/users',
     User = '/user',
     FavoriteArticle = '/articles/:slug/favorite',
-    Profile = '/api/profiles/:username'
+    Profile = '/profiles/:username'
 }
 
 export enum ApiMethods {

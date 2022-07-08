@@ -21,7 +21,7 @@ const routes: RouteRecordRaw[] = [
         meta: { onlyForGuest: true },
     },
     {
-        path: '/profile',
+        path: '/profile/:username',
         name: 'Profile',
         component: PageProfile,
     },
