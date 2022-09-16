@@ -17,6 +17,8 @@ button {
         }
     }
 
+    &.btn-secondary,
+    &.btn-outline-secondary,
     &.btn-primary {
         &:active,
         &:focus,

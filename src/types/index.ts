@@ -44,7 +44,8 @@ export enum ApiEndpoints {
     Register = '/users',
     User = '/user',
     FavoriteArticle = '/articles/:slug/favorite',
-    Profile = '/profiles/:username'
+    Profile = '/profiles/:username',
+    Follow = '/profiles/:username/follow'
 }
 
 export enum ApiMethods {

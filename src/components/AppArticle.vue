@@ -2,10 +2,11 @@
 import { ISOtoDate } from '../utils/date'
 import { Article } from '../types'
 import { useUserStore } from '../stores/user'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { router } from '../router'
+import { storeToRefs } from 'pinia'
 
-const { isAuth } = useUserStore()
+const { isAuth } = storeToRefs(useUserStore())
 const emit = defineEmits(['favorite'])
 const disabled = ref(false)
 interface Props {
@@ -24,7 +25,7 @@ watch(
 )
 
 const favorite = (article: Article) => {
-    if (!isAuth) {
+    if (!isAuth.value) {
         router.push({ name: 'Login' })
         return
     }
@@ -41,13 +42,17 @@ const favoriteClass = (favorited: boolean) => {
         'btn-outline-primary': !favorited,
     }
 }
+
+const authorLink = computed((): string => {
+    return `/profile/${props.article.author.username}`
+})
 </script>
 
 <template>
     <div class="article-meta">
-        <a href="profile.html"><img :src="article.author.image" /></a>
+        <router-link :to="authorLink"><img :src="article.author.image" /></router-link>
         <div class="info">
-            <a href="profile.html" class="author">{{ article.author.username }}</a>
+            <router-link :to="authorLink" class="author">{{ article.author.username }}</router-link>
             <span class="date">{{ ISOtoDate(article.updatedAt) }}</span>
         </div>
         <button

@@ -7,8 +7,8 @@ import { isImage } from '../utils/string'
 
 const { isAuth, user } = storeToRefs(useUserStore())
 const { clearUser } = useUserStore()
-const hasAvatar = computed(() => {
-    return user.value?.image && isImage(user.value?.image)
+const hasAvatar = computed((): boolean => {
+    return !!(user.value?.image && isImage(user.value?.image))
 })
 
 const logout = () => {

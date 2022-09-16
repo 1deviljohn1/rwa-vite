@@ -1,34 +1,12 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue'
-import { router } from '../router'
-import { api } from '../services/api'
-import { useUserStore } from '../stores/user'
-import { ApiMethods, ApiEndpoints, Author } from '../types'
-
-const error = ref('')
-const { isAuth } = useUserStore()
-const isLoading = ref(true)
-let profile = ref<Author | null>(null)
-const username = router.currentRoute.value.params.username
-const errorMessage = `There is no user with username <b>${username}</b>`
+import { onBeforeMount } from 'vue'
+import { useProfile } from '../composable/profile'
+const { error, isLoading, profile, isCurrentUser, isFollowingText, isFollowProcessing, buttonClass, follow, loadProfile } =
+    useProfile()
 
 onBeforeMount(async () => {
-    loadprofileData()
+    loadProfile()
 })
-
-const loadprofileData = async () => {
-    const profileResponse = await api(ApiMethods.Get, ApiEndpoints.Profile.replace(':username', username as string))
-
-    if (profileResponse.responseData) {
-        profile.value = profileResponse.responseData.profile as Author
-    }
-
-    if (profileResponse.responseError && profileResponse.responseError.response?.status === 404) {
-        error.value = errorMessage
-    }
-
-    isLoading.value = false
-}
 </script>
 
 <template>
@@ -47,10 +25,21 @@ const loadprofileData = async () => {
                             <img :src="profile?.image" class="user-img" />
                             <h4>{{ profile?.username }}</h4>
                             <p>{{ profile?.bio }}</p>
-                            <button v-if="!isAuth" class="btn btn-sm btn-outline-secondary action-btn">
+
+                            <button
+                                v-if="!isCurrentUser"
+                                :class="buttonClass"
+                                class="btn btn-sm action-btn"
+                                :disabled="isFollowProcessing"
+                                @click="follow"
+                            >
                                 <i class="ion-plus-round"></i>
-                                &nbsp; follow {{ profile?.username }}
+                                &nbsp; {{ isFollowingText }} {{ profile?.username }}
                             </button>
+                            <router-link v-else to="/settings" class="btn btn-sm btn-outline-secondary action-btn">
+                                <i class="ion-gear-a"></i>
+                                &nbsp; Edit Profile Settings
+                            </router-link>
                         </div>
                     </div>
                 </div>

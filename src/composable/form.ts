@@ -22,7 +22,7 @@ export class Form {
 
         this.isLoading.value = true
         const user = await api(ApiMethods.Post, this.apiEndpoint, formData)
-        const userData = user.responseData.user as User
+        const userData = user.responseData?.user as User
         this.isLoading.value = false
 
         if (user.responseData) {

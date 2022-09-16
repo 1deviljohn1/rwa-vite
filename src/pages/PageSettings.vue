@@ -14,8 +14,8 @@ const password = ref('')
 const isLoading = ref(false)
 const error = ref('')
 
-const isSubmitAllowed = computed(() => {
-    return password.value
+const isSubmitAllowed = computed((): boolean => {
+    return !!password.value
 })
 
 const submit = async () => {
@@ -36,7 +36,7 @@ const submit = async () => {
     if (userData.responseData) {
         const user = userData.responseData.user as User
         setUser(user)
-        router.push({ name: 'Profile' })
+        router.push({ name: 'Profile', params: { username: user.username } })
     } else {
         error.value = userData.responseError.response?.data
     }
@@ -89,6 +89,7 @@ const submit = async () => {
                                     class="form-control form-control-lg"
                                     type="text"
                                     placeholder="Email"
+                                    disabled
                                 />
                             </fieldset>
                             <fieldset class="form-group" :disabled="isLoading">
