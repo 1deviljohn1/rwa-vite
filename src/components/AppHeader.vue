@@ -20,7 +20,7 @@ const logout = () => {
 <template>
     <nav class="navbar navbar-light">
         <div class="container">
-            <router-link to="/" class="navbar-brand">conduit</router-link>
+            <router-link to="/" class="navbar-brand">Vue 3 App</router-link>
             <ul class="nav navbar-nav pull-xs-right">
                 <li class="nav-item">
                     <router-link to="/" class="nav-link">Home</router-link>

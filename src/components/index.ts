@@ -1,5 +1,5 @@
 import AppArticle from './AppArticle.vue'
-import AppFooter from './AppFooter.vue'
 import AppHeader from './AppHeader.vue'
+import AppTabs from './AppTabs.vue'
 
-export { AppArticle, AppFooter, AppHeader }
+export { AppArticle, AppHeader, AppTabs }

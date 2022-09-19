@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { ref, onBeforeMount, watch, computed } from 'vue'
-import { AppArticle } from '../components'
+import { AppArticle, AppTabs } from '../components'
 import { useArticles } from '../composable/articles'
 import { useTags } from '../composable/tags'
 import { useUserStore } from '../stores/user'
@@ -73,13 +73,6 @@ const loadArticlesByTag = async (tag: string) => {
     loadArticles(ArticlesTypes.Articles, { tag: activeTag.value })
 }
 
-const getTabClasses = (name: string) => {
-    return {
-        active: name === activeFeed.value && !activeTag.value,
-        disabled: loading.value,
-    }
-}
-
 const favorite = async (article: Article) => {
     favoriteProcessing.value = true
     try {
@@ -116,18 +109,13 @@ watch(token, async (value) => {
         <div class="container page">
             <div class="row">
                 <div class="col-md-9">
-                    <div class="feed-toggle">
-                        <ul class="nav nav-pills outline-active">
-                            <li v-for="tab in tabs" class="nav-item" @click="loadArticlesByType(tab.name)">
-                                <button class="nav-link clear" :class="getTabClasses(tab.name)" :disabled="loading">
-                                    {{ tab.title }}
-                                </button>
-                            </li>
-                            <li v-if="activeTag" class="nav-item">
-                                <button class="nav-link clear active">#{{ activeTag }}</button>
-                            </li>
-                        </ul>
-                    </div>
+                    <AppTabs
+                        :tabs="tabs"
+                        :active-tag="activeTag"
+                        :active-feed="activeFeed"
+                        :loading="loading"
+                        @select="loadArticlesByType"
+                    />
 
                     <div v-if="error" class="article-preview">{{ error }}</div>
                     <template v-else>
