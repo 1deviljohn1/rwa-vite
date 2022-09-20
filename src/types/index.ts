@@ -14,6 +14,8 @@ export interface Article {
 export enum ArticlesTypes {
     Articles = 'articles',
     Feed = 'feed',
+    Own = 'own',
+    Favorited = 'favorited',
 }
 
 export interface Tab {

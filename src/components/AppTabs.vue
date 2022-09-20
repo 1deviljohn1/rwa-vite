@@ -3,7 +3,7 @@ import { Tab } from '../types'
 
 const props = defineProps<{
     tabs: Array<Tab>
-    activeTag: string,
+    activeTag?: string,
     activeFeed: string | null,
     loading: boolean
 }>()

@@ -2,13 +2,22 @@ import { computed, ref } from 'vue'
 import { router } from '../router'
 import { api } from '../services/api'
 import { useUserStore } from '../stores/user'
-import { ApiMethods, ApiEndpoints, Author } from '../types'
+import { useArticles } from '../composable/articles'
+import { ApiMethods, ApiEndpoints, Author, Tab, ArticlesTypes, Article } from '../types'
 
 const error = ref('')
-const isLoading = ref(true)
+const profileLoading = ref(true)
+const articlesLoading = ref(false)
 const isFollowProcessing = ref(false)
 const profile = ref<Author | null>(null)
 const isFollowing = ref(false)
+const activeTab = ref(ArticlesTypes.Own)
+const articles = ref<Array<Article>>([])
+const { get: getArticles } = useArticles()
+const tabs: Array<Tab> = [
+    { title: 'My Articles', name: ArticlesTypes.Own },
+    { title: 'Favorited Articles', name: ArticlesTypes.Favorited },
+]
 
 const buttonClass = computed(() => {
     return isFollowing.value ? 'btn-outline-secondary' : 'btn-secondary'
@@ -27,6 +36,7 @@ const isCurrentUser = computed((): boolean => {
 })
 
 const loadProfile = async () => {
+    profileLoading.value = true
     const { token } = useUserStore()
     const user = router.currentRoute.value.params.username
     const profileResponse = await api(
@@ -45,7 +55,18 @@ const loadProfile = async () => {
         error.value = `There is no user with username <b>${user}</b>`
     }
 
-    isLoading.value = false
+    profileLoading.value = false
+}
+
+const loadArticles = async (tab: ArticlesTypes) => {
+    const user = router.currentRoute.value.params.username
+    const payload = tab === ArticlesTypes.Own ? { author: user } : { favorited: user }
+
+    articlesLoading.value = true
+    activeTab.value = tab
+    const articlesData = await getArticles(ArticlesTypes.Articles, payload)
+    articles.value = articlesData
+    articlesLoading.value = false
 }
 
 const follow = async () => {
@@ -65,12 +86,17 @@ export const useProfile = () => {
     return {
         profile,
         error,
-        isLoading,
+        profileLoading,
+        articlesLoading,
         isCurrentUser,
         isFollowingText,
         isFollowProcessing,
         buttonClass,
+        tabs,
+        activeTab,
+        articles,
         follow,
         loadProfile,
+        loadArticles,
     }
 }
