@@ -12,7 +12,7 @@ const { get: getArticles, favorite: favoriteArticle } = useArticles()
 const articles = ref<Array<Article>>([])
 const tags = ref<Array<string>>([])
 const error = ref('')
-const loading = ref(false)
+const loading = ref(true)
 const favoriteProcessing = ref(false)
 const type = computed<ArticlesTypes>(() => {
     return isAuth.value ? ArticlesTypes.Feed : ArticlesTypes.Articles
@@ -28,7 +28,7 @@ if (isAuth.value) {
     tabs.value.unshift({ title: 'Your Feed', name: ArticlesTypes.Feed })
 }
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
     loadPageData()
 })
 
@@ -39,6 +39,8 @@ const loadPageData = async () => {
         tags.value = tagsFetch
     } catch (err) {
         error.value = errorMessage
+    } finally {
+        loading.value = false
     }
 }
 

@@ -8,12 +8,13 @@ import { ApiMethods, ApiEndpoints, Author, Tab, ArticlesTypes, Article } from '.
 const error = ref('')
 const profileLoading = ref(true)
 const articlesLoading = ref(false)
-const isFollowProcessing = ref(false)
+const followProcessing = ref(false)
 const profile = ref<Author | null>(null)
 const isFollowing = ref(false)
+const favoriteProcessing = ref(false)
 const activeTab = ref(ArticlesTypes.Own)
 const articles = ref<Array<Article>>([])
-const { get: getArticles } = useArticles()
+const { get: getArticles, favorite: favoriteArticle } = useArticles()
 const tabs: Array<Tab> = [
     { title: 'My Articles', name: ArticlesTypes.Own },
     { title: 'Favorited Articles', name: ArticlesTypes.Favorited },
@@ -70,7 +71,7 @@ const loadArticles = async (tab: ArticlesTypes) => {
 }
 
 const follow = async () => {
-    isFollowProcessing.value = true
+    followProcessing.value = true
 
     const { token } = useUserStore()
     const pageUsername = router.currentRoute.value.params.username
@@ -79,7 +80,15 @@ const follow = async () => {
     const user = userData.responseData.profile as Author
     isFollowing.value = user.following
 
-    isFollowProcessing.value = false
+    followProcessing.value = false
+}
+
+const favorite = async (article: Article) => {
+    favoriteProcessing.value = true
+    const articlesData = await favoriteArticle(article.slug, article.favorited)
+    const updatedIndex = articles.value.findIndex((item) => item.slug === article.slug)
+    articles.value[updatedIndex] = articlesData
+    favoriteProcessing.value = false
 }
 
 export const useProfile = () => {
@@ -90,12 +99,14 @@ export const useProfile = () => {
         articlesLoading,
         isCurrentUser,
         isFollowingText,
-        isFollowProcessing,
+        followProcessing,
+        favoriteProcessing,
         buttonClass,
         tabs,
         activeTab,
         articles,
         follow,
+        favorite,
         loadProfile,
         loadArticles,
     }

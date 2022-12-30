@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue'
 import { useProfile } from '../composable/profile'
-import { AppTabs, AppArticle } from '../components';
-import { ArticlesTypes } from '../types';
+import { AppTabs, AppArticle } from '../components'
+import { ArticlesTypes } from '../types'
 const {
     error,
     profileLoading,
@@ -10,18 +10,20 @@ const {
     profile,
     isCurrentUser,
     isFollowingText,
-    isFollowProcessing,
+    followProcessing,
+    favoriteProcessing,
     buttonClass,
     tabs,
     activeTab,
     articles,
     follow,
+    favorite,
     loadProfile,
     loadArticles,
 } = useProfile()
 
 onBeforeMount(async () => {
-    await Promise.all([loadProfile(), loadArticles(ArticlesTypes.Own)]) 
+    await Promise.all([loadProfile(), loadArticles(ArticlesTypes.Own)])
 })
 </script>
 
@@ -46,7 +48,7 @@ onBeforeMount(async () => {
                                 v-if="!isCurrentUser"
                                 :class="buttonClass"
                                 class="btn btn-sm action-btn"
-                                :disabled="isFollowProcessing"
+                                :disabled="followProcessing"
                                 @click="follow"
                             >
                                 <i class="ion-plus-round"></i>
@@ -74,6 +76,8 @@ onBeforeMount(async () => {
                         <div v-for="article in articles" :key="article.slug" class="article-preview">
                             <AppArticle
                                 :article="article"
+                                :favorite-processing="favoriteProcessing"
+                                @favorite="favorite"
                             />
                         </div>
                     </div>
